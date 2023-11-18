@@ -46,40 +46,33 @@ const Form = ({ modelsList }: { modelsList: OpenAI.ModelsPage }) => {
         message,
         currentModel,
       }),
-    })
-    console.log('Edge function returned.')
+    }).then(response => response.json())
 
-    console.log(response)
+    const body = response
+    // console.log(body)
 
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
+    // if (!response.ok) {
+    //   throw new Error(response.statusText)
+    // }
 
-    const data = response.body
-    if (!data) {
-      return
-    }
+    // const data = response.body
+    // if (!data) {
+    //   return
+    // }
 
-    const reader = data.getReader()
-    const decoder = new TextDecoder()
-    let done = false
+    // console.log(data)
 
-    setHistory((prev) => [...prev, message])
+
+    setHistory((prev) => [...prev, body.message])
 
     let currentResponse: string[] = []
-    while (!done) {
-      const { value, done: doneReading } = await reader.read()
-      done = doneReading
-      const chunkValue = decoder.decode(value)
-      // currentResponse = [...currentResponse, message, chunkValue];
-      currentResponse = [...currentResponse, chunkValue]
-      setHistory((prev) => [...prev.slice(0, -1), currentResponse.join('')])
-      console.log('rerender')
-    }
+
     console.log('rerender-2')
     // breaks text indent on refresh due to streaming
     // localStorage.setItem('response', JSON.stringify(history))
     setIsLoading(false)
+
+    e.preventDefault()
   }
 
   const handleReset = () => {
@@ -106,17 +99,6 @@ const Form = ({ modelsList }: { modelsList: OpenAI.ModelsPage }) => {
 
   return (
     <div className='flex justify-center'>
-      <select
-        value={currentModel}
-        onChange={handleModelChange}
-        className='w-72 fixed top-5 left-5 outline-none border-none p-4 rounded-md bg-white text-gray-500 dark:hover:text-gray-400 dark:hover:bg-gray-900'
-      >
-        {models.map((model) => (
-          <option key={model.id} value={model.id}>
-            {model.id}
-          </option>
-        ))}
-      </select>
 
       <button
         onClick={handleReset}

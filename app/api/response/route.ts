@@ -59,13 +59,3 @@ export async function POST(request: Request) {
 
 
 
-export async function GET(request: Request,res) {
-  const { message } = (await request.json()) as RequestData
-
-  console.log(message)
-
-
-  return new Response({
-    "test":"ds"
-  })
-}
